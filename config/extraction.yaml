@@ -1,0 +1,33 @@
+extraction:
+  granularity: evidence_span
+  contract_id: evidence_span_fact_extraction
+  prompt_id: prompt_kimi_default
+  max_concurrency: 4
+  failure_policy: finish_in_flight_then_fail
+  units:
+    strategy: paragraph
+    sentence_boundary: terminal_punctuation_with_whitespace_or_end
+  dynamic:
+    max_entities_per_unit: 60
+    max_relations_per_unit: 40
+    max_evidence_spans_per_item: 10
+    max_relation_description_characters: 300
+
+extraction_contracts:
+  evidence_span_fact_extraction:
+    prompt_id: prompt_kimi_default
+    schema_id: fact_extraction_schema
+    temporal_representation: top_level_relation_index_bindings
+    deterministic_enrichment: true
+    require_temporal_bindings_field: true
+    require_temporal_surface_evidence: true
+    preserve_temporal_surface: true
+    normalize_temporal_values: false
+    structured_output:
+      function_strict: false
+    allow_no_graph_fact: true
+    allowed_no_graph_fact_reasons:
+      - heading_or_fragment
+      - pure_context
+      - duplicate_statement
+      - no_binary_relation

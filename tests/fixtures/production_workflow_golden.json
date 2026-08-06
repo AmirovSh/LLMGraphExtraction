@@ -1,0 +1,37 @@
+{
+  "tool_arguments": {
+    "entities": [
+      {
+        "local_id": "M001",
+        "name": "Release Platform",
+        "type": "COMPONENT",
+        "evidence_span_ids": ["S001"]
+      },
+      {
+        "local_id": "M002",
+        "name": "Audit Console",
+        "type": "COMPONENT",
+        "evidence_span_ids": ["S001"]
+      }
+    ],
+    "relations": [
+      {
+        "source_local_id": "M001",
+        "raw_relation": "exposes",
+        "relation_family": "ACCESS",
+        "relation_description": "The platform exposes the console.",
+        "target_local_id": "M002",
+        "evidence_span_ids": ["S001"],
+        "support_level": "EXPLICIT",
+        "qualifiers": {
+          "temporality": null,
+          "condition": null,
+          "modality": "ASSERTED",
+          "negated": false,
+          "quantity": null,
+          "version": null
+        }
+      }
+    ]
+  }
+}

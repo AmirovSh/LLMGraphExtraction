@@ -1,0 +1,65 @@
+{
+  "contract_version": "2",
+  "fixture": "examples/sample_input.txt",
+  "structured_fixture": "tests/golden/public_sample_structured_outputs.json",
+  "prompt_id": "prompt_kimi_default",
+  "prompt_hash": "fb95eee07c769423a9ef64796c0aa302a96c0161929b28d6389a822fbd1d9d43",
+  "required_entities": [
+    "Harbor Operations Hub",
+    "Inspection Policy 4.2",
+    "Scheduling Service",
+    "Maintenance Work Order",
+    "Version 3.7 of the Sensor Gateway",
+    "Operations Ledger",
+    "Audit Portal",
+    "evidence"
+  ],
+  "required_relations": [
+    {"source": "Harbor Operations Hub", "raw_relation": "coordinates", "target": "maintenance work", "negated": false},
+    {"source": "Scheduling Service", "raw_relation": "creates", "target": "Maintenance Work Order", "negated": false},
+    {"source": "Audit Portal", "raw_relation": "reads decisions from", "target": "Operations Ledger", "negated": false},
+    {"source": "Audit Portal", "raw_relation": "displays", "target": "evidence", "negated": false}
+  ],
+  "forbidden_relations": [
+    {"source": "maintenance work", "raw_relation": "related_to", "target": "Harbor Operations Hub"},
+    {"source": "Version 3.7 of the Sensor Gateway", "raw_relation": "replaces", "target": "Inspection Policy 4.2"},
+    {"source": "Harbor Operations Hub", "raw_relation": "coordinates", "target": "North Pier"},
+    {"source": "Audit Portal", "raw_relation": "displays", "target": "Operations Ledger"}
+  ],
+  "required_alias_merges": [],
+  "required_separate_entities": [
+    ["Scheduling Service", "Maintenance Work Order"],
+    ["Inspection Policy 4.2", "Version 3.7 of the Sensor Gateway"]
+  ],
+  "required_qualifier_cases": [
+    {
+      "source": "Inspection Policy 4.2",
+      "raw_relation": "applies",
+      "field": "temporality",
+      "value": "from 1 September 2026 until 31 March 2027"
+    }
+  ],
+  "call_budget": {
+    "unit_count": 42,
+    "primary_successful_calls": 42,
+    "primary_http_attempts": 42,
+    "primary_failed_attempts": 0,
+    "primary_timeout_attempts": 0,
+    "automatic_retries": 0,
+    "transport_successes": 42,
+    "transport_failures": 0,
+    "provider_response_rejections": 0,
+    "tool_contract_failures": 0,
+    "schema_failures": 0,
+    "evidence_failures": 0,
+    "accepted_extractions": 42,
+    "post_extraction_llm_calls": 0,
+    "embedding_calls": 1
+  },
+  "projection_contract": {
+    "node_label": "FACT_ENTITY",
+    "relationship_type": "FACT_RELATION",
+    "indexes": ["fact_entity_graph_id", "fact_relation_graph_id"],
+    "parity_status": "passed"
+  }
+}

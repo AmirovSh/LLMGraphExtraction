@@ -1,0 +1,19 @@
+entity_resolution:
+  enabled: true
+  embedding:
+    model: bge-m3
+    input_format: canonical_name_only
+  retrieval:
+    small_run_pairwise_limit: 500
+    method_for_small_run: full_pairwise_cosine_matrix
+    method_for_large_run: top_k_from_full_matrix
+    top_k: 10
+  thresholds:
+    candidate_similarity: 0.76
+    automatic_merge_similarity: 0.90
+  decisions:
+    type_is_hard_filter: false
+    require_context_for_semantic_alias_merge: true
+    exact_name_cross_unit_merge: true
+    case_only_name_merge: true
+    semantic_conflict_blocks_merge: true

@@ -1,0 +1,12 @@
+neo4j:
+  uri_env: NEO4J_URI
+  username_env: NEO4J_USERNAME
+  password_env: NEO4J_PASSWORD
+  database_env: NEO4J_DATABASE
+  default_database: neo4j
+  namespace_property: graph_id
+  browser_base_url: http://localhost:7474/browser
+
+graph_projection:
+  entity_label: FACT_ENTITY
+  relation_type: FACT_RELATION

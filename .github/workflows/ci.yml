@@ -1,0 +1,41 @@
+name: Offline project conformance
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  public-install-and-offline-validation:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -c constraints.txt -e ".[test]"
+      - run: python -m pytest
+      - run: python -m devtools.check_project_conformance --offline
+      - run: python -m devtools.check_public_golden --offline
+      - run: python -m scripts.run_production --help
+      - run: python -m scripts.rebuild_projection --help
+      - run: python -m scripts.open_graph --help
+      - run: git diff --check
+      - name: Verify generated-file cleanliness
+        shell: bash
+        run: test -z "$(git status --short)"
+
+  agent-skills-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -c constraints.txt -e ".[test]"
+      - run: python -m pytest tests/test_agent_skills.py

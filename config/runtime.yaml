@@ -1,0 +1,133 @@
+runtime:
+  remote:
+    llm_base_url_env: SEMANTIC_GRAPH_LLM_BASE_URL
+    llm_api_key_env: OPENAI_API_KEY
+    llm_provider_profile: kimi_k2_6_vllm_structured
+    sampling_profiles:
+      kimi_structured_temperature_zero:
+        temperature: 0.0
+        top_p: null
+        seed: null
+      # Backward-compatible alias. Temperature zero reduces sampling variation
+      # but does not guarantee identical output on a distributed backend.
+      kimi_structured_deterministic:
+        temperature: 0.0
+        top_p: null
+        seed: null
+      kimi_instant_default:
+        temperature: 0.6
+        top_p: 0.95
+        seed: null
+      kimi_thinking_official:
+        temperature: 1.0
+        top_p: 0.95
+        seed: null
+    provider_profiles:
+      kimi_k2_6_vllm_instant:
+        profile_id: kimi_k2_6_vllm_instant
+        sampling_profile: kimi_instant_default
+        model_id: kimi-2.6
+        structured_output_transport: native_tool_call
+        tool_choice: auto
+        parallel_tool_calls: false
+        stream: false
+        temperature: 0.6
+        top_p: 0.95
+        seed: null
+        max_output_tokens: 16384
+        timeout_seconds: 600
+        request_extra_body:
+          chat_template_kwargs:
+            thinking: false
+            preserve_thinking: false
+        expected_tool_calls: 1
+        require_correct_tool_name: true
+        require_schema_valid: true
+        require_evidence_valid: true
+        reasoning_response_fields:
+          - reasoning
+          - reasoning_content
+        reasoning_policy: require_empty
+        accepted_finish_reasons:
+          - tool_calls
+          - stop
+        server_expectations:
+          auto_tool_choice_enabled: true
+          tool_call_parser: kimi_k2
+          reasoning_parser: kimi_k2
+      kimi_k2_6_vllm_structured:
+        profile_id: kimi_k2_6_vllm_structured
+        sampling_profile: kimi_structured_temperature_zero
+        model_id: kimi-2.6
+        structured_output_transport: native_tool_call
+        tool_choice: auto
+        parallel_tool_calls: false
+        stream: false
+        temperature: 0.6
+        top_p: 0.95
+        seed: null
+        max_output_tokens: 16384
+        timeout_seconds: 600
+        request_extra_body:
+          chat_template_kwargs:
+            thinking: false
+            preserve_thinking: false
+        expected_tool_calls: 1
+        require_correct_tool_name: true
+        require_schema_valid: true
+        require_evidence_valid: true
+        reasoning_response_fields:
+          - reasoning
+          - reasoning_content
+        reasoning_policy: require_empty
+        accepted_finish_reasons:
+          - tool_calls
+          - stop
+        server_expectations:
+          auto_tool_choice_enabled: true
+          tool_call_parser: kimi_k2
+          reasoning_parser: kimi_k2
+      kimi_k2_6_vllm_thinking_structured:
+        profile_id: kimi_k2_6_vllm_thinking_structured
+        sampling_profile: kimi_thinking_official
+        model_id: kimi-2.6
+        structured_output_transport: native_tool_call
+        tool_choice: auto
+        parallel_tool_calls: false
+        stream: false
+        temperature: 1.0
+        top_p: 0.95
+        seed: null
+        max_output_tokens: 32768
+        timeout_seconds: 900
+        request_extra_body:
+          chat_template_kwargs:
+            thinking: true
+            preserve_thinking: false
+        expected_tool_calls: 1
+        require_correct_tool_name: true
+        require_schema_valid: true
+        require_evidence_valid: true
+        reasoning_response_fields:
+          - reasoning
+          - reasoning_content
+        reasoning_policy: allow_nonempty
+        reasoning_persistence: discard
+        accepted_finish_reasons:
+          - tool_calls
+          - stop
+        server_expectations:
+          auto_tool_choice_enabled: true
+          tool_call_parser: kimi_k2
+          reasoning_parser: kimi_k2
+    capability_probe:
+      plain_chat_max_output_tokens: 1024
+      minimal_tool_max_output_tokens: 2048
+      production_schema_max_output_tokens: 16384
+      thinking_max_output_tokens: 4096
+      timeout_seconds: 600
+    llm_request_overrides: {}
+    embedding_base_url_env: SEMANTIC_GRAPH_EMBEDDING_BASE_URL
+    embedding_api_key_env: OPENAI_API_KEY
+    embedding_timeout_seconds: 120
+    trust_env: false

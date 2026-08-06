@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=77,<81"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "semantic-fact-graph"
+version = "0.1.0rc1"
+description = "Experimental schema-constrained fact-graph extraction pipeline with JSON authority and Neo4j parity validation."
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = ["fact-extraction", "knowledge-graph", "neo4j", "structured-output"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "pydantic>=2.12,<3",
+  "PyYAML>=6.0,<7",
+  "httpx>=0.28,<0.29",
+  "neo4j>=5.28,<6",
+]
+
+[project.optional-dependencies]
+test = ["pytest==9.0.2"]
+dev = ["pytest==9.0.2"]
+
+[tool.setuptools.packages.find]
+include = ["config*", "prompts*", "runtime*", "scripts*"]
+exclude = ["configs*", "outputs*", "release_acceptance*", "release_audit*", "tests*"]
+
+[tool.setuptools.package-data]
+config = ["*.yaml", "*.grass"]
+"prompts.fact_extraction" = ["*.md", "*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.semantic-fact-graph.conformance]
+offline-test-files = [
+  "tests/test_agent_skills.py",
+  "tests/test_final_graph_contract.py",
+  "tests/test_projection_schema_parity.py",
+  "tests/test_graph_semantic_invariants.py",
+  "tests/test_text_span_integrity.py",
+  "tests/test_public_golden_contract.py",
+]

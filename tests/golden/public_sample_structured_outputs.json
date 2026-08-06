@@ -1,0 +1,582 @@
+{
+  "contract_id": "fact_extraction_schema",
+  "fixture": "examples/sample_input.txt",
+  "units": [
+    {
+      "unit_id": "U001_S001",
+      "arguments": {
+        "status": "facts_present",
+        "entities": [
+          {
+            "canonical_name": "Harbor Operations Hub",
+            "entity_type": "COMPONENT"
+          },
+          {
+            "canonical_name": "maintenance work",
+            "entity_type": "PROCESS"
+          }
+        ],
+        "relations": [
+          {
+            "source_entity_index": 0,
+            "raw_relation": "coordinates",
+            "relation_family": "RESPONSIBILITY_OWNERSHIP",
+            "target_entity_index": 1,
+            "condition": null,
+            "modality": "ASSERTED",
+            "quantity": null,
+            "version": null,
+            "negated": false
+          }
+        ],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": null
+      }
+    },
+    {
+      "unit_id": "U001_S002",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U001_S003",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U001_S004",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U001_S005",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U001_S006",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U001_S007",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U002_S008",
+      "arguments": {
+        "status": "facts_present",
+        "entities": [
+          {
+            "canonical_name": "Inspection Policy 4.2",
+            "entity_type": "CONTROL"
+          },
+          {
+            "canonical_name": "1 September 2026–31 March 2027",
+            "entity_type": "TIME_RANGE"
+          }
+        ],
+        "relations": [
+          {
+            "source_entity_index": 0,
+            "raw_relation": "applies",
+            "relation_family": "CONDITION_REQUIREMENT",
+            "target_entity_index": 1,
+            "condition": null,
+            "modality": "ASSERTED",
+            "quantity": null,
+            "version": "4.2",
+            "negated": false
+          }
+        ],
+        "temporal_bindings": [
+          {
+            "relation_index": 0,
+            "surface": "from 1 September 2026 until 31 March 2027"
+          }
+        ],
+        "no_graph_fact_reason": null
+      }
+    },
+    {
+      "unit_id": "U002_S009",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U002_S010",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U002_S011",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U002_S012",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U002_S013",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U002_S014",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U003_S015",
+      "arguments": {
+        "status": "facts_present",
+        "entities": [
+          {
+            "canonical_name": "Scheduling Service",
+            "entity_type": "COMPONENT"
+          },
+          {
+            "canonical_name": "Maintenance Work Order",
+            "entity_type": "RECORD"
+          }
+        ],
+        "relations": [
+          {
+            "source_entity_index": 0,
+            "raw_relation": "creates",
+            "relation_family": "DATA_FLOW",
+            "target_entity_index": 1,
+            "condition": "only after the Condition Review has allowed scheduling",
+            "modality": "ASSERTED",
+            "quantity": null,
+            "version": null,
+            "negated": false
+          }
+        ],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": null
+      }
+    },
+    {
+      "unit_id": "U003_S016",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U003_S017",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U003_S018",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U003_S019",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U003_S020",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U003_S021",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U003_S022",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U004_S023",
+      "arguments": {
+        "status": "facts_present",
+        "entities": [
+          {
+            "canonical_name": "Version 3.7 of the Sensor Gateway",
+            "entity_type": "VERSION"
+          },
+          {
+            "canonical_name": "vibration readings",
+            "entity_type": "DATA"
+          }
+        ],
+        "relations": [
+          {
+            "source_entity_index": 0,
+            "raw_relation": "publishes",
+            "relation_family": "DATA_FLOW",
+            "target_entity_index": 1,
+            "condition": null,
+            "modality": "ASSERTED",
+            "quantity": "every five minutes",
+            "version": "3.7",
+            "negated": false
+          }
+        ],
+        "temporal_bindings": [
+          {
+            "relation_index": 0,
+            "surface": "every five minutes"
+          }
+        ],
+        "no_graph_fact_reason": null
+      }
+    },
+    {
+      "unit_id": "U004_S024",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U004_S025",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U004_S026",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U004_S027",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U004_S028",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U004_S029",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U005_S030",
+      "arguments": {
+        "status": "facts_present",
+        "entities": [
+          {
+            "canonical_name": "Harbor Operations Hub",
+            "entity_type": "COMPONENT"
+          },
+          {
+            "canonical_name": "Operations Ledger",
+            "entity_type": "COMPONENT"
+          }
+        ],
+        "relations": [
+          {
+            "source_entity_index": 0,
+            "raw_relation": "sends completed work results to",
+            "relation_family": "DATA_FLOW",
+            "target_entity_index": 1,
+            "condition": null,
+            "modality": "ASSERTED",
+            "quantity": null,
+            "version": null,
+            "negated": false
+          }
+        ],
+        "temporal_bindings": [
+          {
+            "relation_index": 0,
+            "surface": "At the end of each shift"
+          }
+        ],
+        "no_graph_fact_reason": null
+      }
+    },
+    {
+      "unit_id": "U005_S031",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U005_S032",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U005_S033",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U005_S034",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U005_S035",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U005_S036",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U006_S037",
+      "arguments": {
+        "status": "facts_present",
+        "entities": [
+          {
+            "canonical_name": "Audit Portal",
+            "entity_type": "COMPONENT"
+          },
+          {
+            "canonical_name": "Operations Ledger",
+            "entity_type": "COMPONENT"
+          },
+          {
+            "canonical_name": "evidence",
+            "entity_type": "ASSERTION"
+          }
+        ],
+        "relations": [
+          {
+            "source_entity_index": 0,
+            "raw_relation": "reads decisions from",
+            "relation_family": "DATA_FLOW",
+            "target_entity_index": 1,
+            "condition": null,
+            "modality": "ASSERTED",
+            "quantity": null,
+            "version": null,
+            "negated": false
+          },
+          {
+            "source_entity_index": 0,
+            "raw_relation": "displays",
+            "relation_family": "DATA_FLOW",
+            "target_entity_index": 2,
+            "condition": null,
+            "modality": "ASSERTED",
+            "quantity": null,
+            "version": null,
+            "negated": false
+          }
+        ],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": null
+      }
+    },
+    {
+      "unit_id": "U006_S038",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U006_S039",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U006_S040",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U006_S041",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    },
+    {
+      "unit_id": "U006_S042",
+      "arguments": {
+        "status": "no_graph_fact",
+        "entities": [],
+        "relations": [],
+        "temporal_bindings": [],
+        "no_graph_fact_reason": "no_binary_relation"
+      }
+    }
+  ]
+}

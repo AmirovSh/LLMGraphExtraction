@@ -1,0 +1,27 @@
+version: "1"
+mode: soft_guidance
+entity_guidance:
+  EVENT: A bounded occurrence, incident, decision, experiment, or change.
+  STATE: An asserted condition that can hold over time.
+  METRIC: A named measured quantity, threshold, or observed value.
+  VERSION: An explicitly named release, revision, or dated configuration.
+  RESPONSIBILITY: An explicitly assigned duty, ownership, or operational role.
+  QUALITY_CRITERION: An acceptance measure, validation criterion, or quality threshold.
+  ASSERTION: A reported claim, statement, or conclusion whose source status matters.
+relation_families:
+  COMPOSITION: contains, part_of, member_of, component_of.
+  DATA_FLOW: sends_to, receives_from, produces, consumes, stores, transfers_to.
+  PROCESSING_SEQUENCE: precedes, follows, triggers, occurs_after.
+  DEPENDENCY: depends_on, requires, uses, calls, implements.
+  VALIDATION_QUALITY: validates, measures, checks, meets_criterion.
+  RESPONSIBILITY_OWNERSHIP: responsible_for, owns, assigned_to, transfers_responsibility_to.
+  LIFECYCLE_VERSION: replaces, supersedes, deprecated_by, introduced_in, applies_in_version.
+  CONDITION_REQUIREMENT: conditioned_by, applies_to, permitted_if, prohibited_if.
+  CAUSAL_RESULT: causes, results_in, explains, mitigates.
+  ASSERTION_CONTEXT: asserts, reports, contradicts, supports.
+non_equivalence_rules:
+  - Monitoring or measurement is not validation unless the source explicitly states an acceptance or correctness check.
+  - Responsibility transfer is not component replacement unless the source states that the component or version is replaced.
+  - Temporal co-occurrence is not a relation.
+  - Sharing an evidence span is not evidence that two entities are related.
+  - A condition is not a cause unless the source explicitly expresses causality.

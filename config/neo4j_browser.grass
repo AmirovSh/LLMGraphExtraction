@@ -1,0 +1,7 @@
+node.FACT_ENTITY {
+  caption: "{canonical_name}";
+}
+
+relationship.FACT_RELATION {
+  caption: "{raw_relation}";
+}

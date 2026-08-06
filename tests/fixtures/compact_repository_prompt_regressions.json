@@ -1,0 +1,12 @@
+[
+  {"id":"reads_approvals","source":"The dashboard reads approvals from the registry.","entities":["dashboard","registry"],"relations":[[0,"reads approvals from",1,"DATA_FLOW"]],"bindings":[]},
+  {"id":"retrieves_records","source":"The service retrieves records from the archive.","entities":["service","archive"],"relations":[[0,"retrieves records from",1,"DATA_FLOW"]],"bindings":[]},
+  {"id":"loads_settings","source":"The agent loads settings from the repository.","entities":["agent","repository"],"relations":[[0,"loads settings from",1,"DATA_FLOW"]],"bindings":[]},
+  {"id":"reads_and_displays","source":"The console reads reports from the archive and displays evidence.","entities":["console","archive","evidence"],"relations":[[0,"reads reports from",1,"DATA_FLOW"],[0,"displays",2,"DATA_FLOW"]],"bindings":[]},
+  {"id":"retrieves_and_publishes","source":"The console retrieves records from the archive and publishes a summary.","entities":["console","archive","summary"],"relations":[[0,"retrieves records from",1,"DATA_FLOW"],[0,"publishes",2,"DATA_FLOW"]],"bindings":[]},
+  {"id":"repository_must_link","source":"The client obtains decisions from the ledger.","entities":["client","ledger"],"relations":[[0,"obtains decisions from",1,"DATA_FLOW"]],"bindings":[]},
+  {"id":"object_not_endpoint","source":"The worker receives approvals from the registry.","entities":["worker","registry"],"relations":[[0,"receives approvals from",1,"DATA_FLOW"]],"bindings":[]},
+  {"id":"second_predicate_required","source":"The portal loads reports from storage and shows evidence.","entities":["portal","storage","evidence"],"relations":[[0,"loads reports from",1,"DATA_FLOW"],[0,"shows",2,"DATA_FLOW"]],"bindings":[]},
+  {"id":"temporal_repository","source":"The client reads decisions from the ledger after approval.","entities":["client","ledger"],"relations":[[0,"reads decisions from",1,"DATA_FLOW"]],"bindings":[[0,"after approval"]]},
+  {"id":"non_temporal_repository","source":"The client reads decisions from the ledger.","entities":["client","ledger"],"relations":[[0,"reads decisions from",1,"DATA_FLOW"]],"bindings":[]}
+]
