@@ -31,6 +31,7 @@ runtime:
         profile_id: deepseek_v4_flash_0731_vllm
         sampling_profile: deepseek_v4_flash_temperature_zero
         model_id: deepseek-ai/DeepSeek-V4-Flash-0731
+        served_model_id: deepseek-v4-flash
         structured_output_transport: native_tool_call
         tool_choice: auto
         parallel_tool_calls: false

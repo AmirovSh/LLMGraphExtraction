@@ -90,7 +90,13 @@ def test_contract_selection_is_configured_and_model_independent() -> None:
 def test_generic_provider_profiles_and_request_override_forwarding() -> None:
     settings = load_project_settings(ROOT / "config")
     deepseek_payload = request_payload(settings, "extract", {"type": "object"})
-    assert deepseek_payload["model"] == "deepseek-ai/DeepSeek-V4-Flash-0731"
+    assert deepseek_payload["model"] == "deepseek-v4-flash"
+    assert settings.runtime.remote.selected_provider_profile.model_id == (
+        "deepseek-ai/DeepSeek-V4-Flash-0731"
+    )
+    assert settings.runtime.remote.selected_provider_profile.served_model_id == (
+        "deepseek-v4-flash"
+    )
     assert deepseek_payload["tool_choice"] == "auto"
     assert deepseek_payload["parallel_tool_calls"] is False
     assert deepseek_payload["temperature"] == 0 and "top_p" not in deepseek_payload

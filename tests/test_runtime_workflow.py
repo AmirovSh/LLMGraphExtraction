@@ -165,6 +165,7 @@ def test_offline_span_run_preserves_graph_resolution_and_budget(tmp_path: Path, 
     assert before["prompt_manifest.json"]["schema_id"] == "fact_extraction_schema"
     request_identity = before["prompt_manifest.json"]["request_identity"]
     assert request_identity["model_id"] == "deepseek-ai/DeepSeek-V4-Flash-0731"
+    assert request_identity["served_model_id"] == "deepseek-v4-flash"
     assert request_identity["provider_profile_id"] == "deepseek_v4_flash_0731_vllm"
     assert request_identity["prompt_hash"] == before["prompt_manifest.json"]["prompt_hash"]
     assert request_identity["schema_hash"] == "eb4ce676614fd8e107c44563a487e0c16ba9d95ee047109bfc0d05f8c00ed3ae"
