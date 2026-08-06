@@ -1,0 +1,29 @@
+manifest_version: 1
+
+batch:
+  id: example_batch
+  output_directory: ../outputs/example_batch
+
+execution:
+  global_max_in_flight: 24
+  per_document_max_in_flight: 4
+  per_graph_max_in_flight: 12
+  scheduling_policy: fair_round_robin
+  continue_other_graphs_on_failure: true
+
+model:
+  provider_profile: deepseek_v4_flash_0731_vllm
+  model_id: deepseek-ai/DeepSeek-V4-Flash-0731
+
+documents:
+  - {id: document_01, path: ../data/document_01.txt}
+  - {id: document_02, path: ../data/document_02.txt}
+  - {id: document_03, path: ../data/document_03.txt}
+  - {id: document_04, path: ../data/document_04.txt}
+  - {id: document_05, path: ../data/document_05.txt}
+  - {id: document_06, path: ../data/document_06.txt}
+
+graphs:
+  - {id: graph_a, documents: [document_01, document_02]}
+  - {id: graph_b, documents: [document_03, document_04, document_05]}
+  - {id: graph_c, documents: [document_06]}
