@@ -260,6 +260,10 @@ contains 103 nodes and 117 edges and has exact JSON/Neo4j parity.
 
 ![Neo4j fact-graph example](docs/images/visualisation.svg)
 
+<!-- Manual Neo4j Browser screenshot placeholder: the repository owner may add
+a reviewed screenshot asset after review. Keep this as text until the real
+screenshot is tracked; do not add an image link to a missing file. -->
+
 LLM extraction is probabilistic. Repeated processing of the same text may
 produce semantically different but structurally valid graphs.
 
@@ -313,6 +317,12 @@ python -m pytest
 python -m devtools.check_project_conformance --offline
 git diff --check
 ```
+
+## Reviewing the project
+
+For a guided technical review of the architecture, runtime boundaries, batch
+processing, tests, and live acceptance evidence, see
+[`docs/HUMAN_REVIEW_GUIDE.md`](docs/HUMAN_REVIEW_GUIDE.md).
 
 Install renderer dependencies with `python -m pip install -c constraints.txt -e ".[docs]"`.
 Dependency updates are deliberate: update compatible bounds and
@@ -375,7 +385,9 @@ visible but does not invalidate a structurally completed graph or block release.
 - Raw requests and responses may contain source-document content.
 - Endpoint latency/load is external; automatic retries are unsupported.
 - Observability artifacts are always emitted.
-- The DeepSeek default profile is implemented and offline-validated; live endpoint activation remains pending.
+- The DeepSeek default profile is offline-validated; sanitized completed live
+  compatibility evidence is summarized in
+  [`docs/LIVE_ACCEPTANCE_SUMMARY.md`](docs/LIVE_ACCEPTANCE_SUMMARY.md).
 
 ## Privacy and data retention
 
