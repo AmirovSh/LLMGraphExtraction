@@ -18,13 +18,18 @@ never a recovery or semantic-editing store.
 - embedding model/input: `bge-m3` / `canonical_name_only`.
 
 > [!NOTE]
-> The currently selected `kimi-2.6` extraction model, `bge-m3` embedding model,
+> The currently selected `deepseek-ai/DeepSeek-V4-Flash-0731` extraction model,
+> `bge-m3` embedding model,
 > prompt, thresholds, and other runtime parameters were used to provide a
 > reproducible demonstration. They have not been established as optimal for
 > this text or for other document classes. Do not treat the checked-in
 > configuration as recommended quality, cost, or performance parameters;
 > evaluate models, prompts, and thresholds against representative evidence and
 > acceptance criteria for the intended deployment.
+
+`prompt_kimi_default` is a retained legacy prompt identifier shared by the
+DeepSeek and Kimi provider profiles. It does not perform model-name-based
+routing and is not claimed to be specifically optimized for DeepSeek.
 
 Temperature zero reduces sampling variation but does not guarantee identical
 semantic output on a distributed serving backend. Byte-identical graphs,

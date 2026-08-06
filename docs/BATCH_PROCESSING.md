@@ -68,6 +68,9 @@ Kimi remains explicitly available through `kimi_k2_6_vllm_structured`. There is
 no automatic model fallback and a batch uses exactly one primary profile. Both
 profiles use the unchanged `prompt_kimi_default` prompt and
 `fact_extraction_schema` contract in this repository.
+`prompt_kimi_default` is a retained legacy identifier: it does not select Kimi,
+does not cause model-name-based routing, and is not claimed to be specifically
+optimized for DeepSeek.
 
 The legacy single-document command remains unchanged:
 

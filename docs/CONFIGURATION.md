@@ -5,7 +5,7 @@ only from the environment variables named there. Every run persists a redacted
 `resolved_run_config.json`.
 
 `llm_request_overrides` is not a generic payload escape hatch. Production allows
-only the Kimi `chat_template_kwargs` keys `thinking` and
+only the `chat_template_kwargs` keys `thinking` and
 `preserve_thinking`; model, messages, tools, transport, endpoint, headers, and
 credential-like keys are rejected before transport.
 
@@ -24,10 +24,16 @@ The schema is `fact_extraction_schema`. It uses compact
 zero-based entity/relation indices and top-level temporal bindings. Technical
 IDs and evidence references are added deterministically after validation.
 
-## Kimi provider
+`prompt_kimi_default` is a retained legacy prompt identifier shared by the
+DeepSeek and Kimi profiles. It does not cause model-name-based routing and has
+not been renamed because its public identity and hash are compatibility
+contracts. It is not claimed to be specifically optimized for DeepSeek.
 
-Production selects `kimi_k2_6_vllm_structured` and
-`kimi_structured_temperature_zero`:
+## DeepSeek default and Kimi compatibility
+
+Production selects provider profile `deepseek_v4_flash_0731_vllm`, requested
+model ID `deepseek-ai/DeepSeek-V4-Flash-0731`, and sampling profile
+`deepseek_v4_flash_temperature_zero`:
 
 ```yaml
 temperature: 0.0
@@ -35,18 +41,20 @@ top_p: null
 seed: null
 ```
 
-Null `top_p` and `seed` are omitted from the request. The self-hosted Kimi
-profile sends `chat_template_kwargs.thinking=false` and
-`preserve_thinking=false`, uses `tool_choice=auto`, and requires the server's
-native `kimi_k2` tool parser. The original chat template remains unchanged.
+Null `top_p` and `seed` are omitted from the request. The DeepSeek profile sends
+`chat_template_kwargs.thinking=false` and `preserve_thinking=false`, uses
+`tool_choice=auto`, and records DeepSeek V4 server parser expectations. Live
+native-tool compatibility remains to be demonstrated against the deployment.
 
 `kimi_structured_deterministic` is a backward-compatible alias only. Its name
 does not promise determinism: temperature zero reduces sampling variation but
 cannot guarantee identical semantic output on distributed serving backends.
 
-The retained provider profiles are Kimi vLLM instant, structured production,
-and thinking diagnostics. Qwen and DeepSeek qualification profiles are not
-active configuration and cannot be selected.
+The retained Kimi vLLM instant, structured, and thinking profiles remain
+explicitly selectable for backward compatibility. No DeepSeek-to-Kimi or
+Kimi-to-DeepSeek automatic fallback exists. A requested-to-served model alias
+is used only when `served_model_id` is explicitly configured and validated;
+the requested model ID is never silently rewritten from model discovery.
 
 ## Entity resolution
 

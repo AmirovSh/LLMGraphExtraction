@@ -1,6 +1,6 @@
 # Semantic Fact Graph
 
-An experimental, schema-constrained fact-graph extraction pipeline using Kimi K2.6, deterministic technical enrichment, typed graph validation, JSON authority, and Neo4j parity verification.
+An experimental, schema-constrained fact-graph extraction pipeline using a configured OpenAI-compatible model, deterministic technical enrichment, typed graph validation, JSON authority, and Neo4j parity verification.
 
 ## Project status
 
@@ -60,15 +60,13 @@ is never counted as an accepted extraction.
 - a compatible embeddings endpoint exposing configured model `bge-m3`;
 - Neo4j 5.x for projection (Docker Compose example included).
 
-The selected extraction profile is `kimi_k2_6_vllm_structured` for model
-`kimi-2.6`; the general-purpose `kimi_k2_6_vllm_instant` profile remains
-available with its original sampling defaults. The structured profile uses
-`temperature=0`, omits `top_p`, uses `tool_choice=auto`, and forwards
-`chat_template_kwargs.thinking=false` plus `preserve_thinking=false` to an
-unmodified Kimi K2.6 chat template. The endpoint must still return exactly one
-native tool call with the correct name and schema/evidence-valid arguments.
-Profile configuration cannot compensate for a serving endpoint that lacks the
-Kimi tool parser.
+The active default provider profile is `deepseek_v4_flash_0731_vllm`, with
+requested model ID `deepseek-ai/DeepSeek-V4-Flash-0731`. The endpoint must
+return exactly one native tool call with the correct name and schema/evidence-
+valid arguments. Live native-tool compatibility remains an explicit deployment
+qualification step. `kimi_k2_6_vllm_structured` remains available as a
+backward-compatible, explicitly selected profile; there is no automatic model
+fallback in either direction.
 
 ## Installation
 
@@ -118,7 +116,7 @@ Active non-secret YAML:
 Strict settings reject unknown contract/prompt pairs, provider profiles,
 fields, and unsupported modes before transport. Profiles own model ID, the
 native-tool structured-output transport, tool choice, sampling, timeout, and reasoning policy.
-Provider extras and run-level overrides are restricted to the validated Kimi
+Provider extras and run-level overrides are restricted to the validated
 `chat_template_kwargs.thinking` and `preserve_thinking` extension boundary.
 
 ## Prompt registry
@@ -135,6 +133,9 @@ extraction:
 ```
 
 `config/extraction.yaml` owns the semantic prompt, contract, and schema IDs.
+`prompt_kimi_default` is a retained legacy prompt identifier currently shared
+by the DeepSeek and Kimi profiles. It does not cause model-name-based routing
+and is not claimed to be specifically optimized for DeepSeek.
 `resolve_prompt(prompt_id)` resolves only the configured prompt asset and its
 typed adapter; unsupported prompt IDs fail before transport. The configured
 `fact_extraction_schema` uses compact zero-based entity/relation
@@ -374,7 +375,7 @@ visible but does not invalidate a structurally completed graph or block release.
 - Raw requests and responses may contain source-document content.
 - Endpoint latency/load is external; automatic retries are unsupported.
 - Observability artifacts are always emitted.
-- The selected production model is Kimi K2.6; semantic repeatability is not a gate.
+- The DeepSeek default profile is implemented and offline-validated; live endpoint activation remains pending.
 
 ## Privacy and data retention
 
