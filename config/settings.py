@@ -156,6 +156,7 @@ class ProviderProfile(StrictModel):
     profile_id: str = Field(min_length=1)
     sampling_profile: str | None = None
     model_id: str = Field(min_length=1)
+    served_model_id: str | None = Field(default=None, min_length=1)
     structured_output_transport: Literal[
         "native_tool_call", "response_format_json", "structured_outputs",
     ]

@@ -2,8 +2,12 @@ runtime:
   remote:
     llm_base_url_env: SEMANTIC_GRAPH_LLM_BASE_URL
     llm_api_key_env: OPENAI_API_KEY
-    llm_provider_profile: kimi_k2_6_vllm_structured
+    llm_provider_profile: deepseek_v4_flash_0731_vllm
     sampling_profiles:
+      deepseek_v4_flash_temperature_zero:
+        temperature: 0.0
+        top_p: null
+        seed: null
       kimi_structured_temperature_zero:
         temperature: 0.0
         top_p: null
@@ -23,6 +27,38 @@ runtime:
         top_p: 0.95
         seed: null
     provider_profiles:
+      deepseek_v4_flash_0731_vllm:
+        profile_id: deepseek_v4_flash_0731_vllm
+        sampling_profile: deepseek_v4_flash_temperature_zero
+        model_id: deepseek-ai/DeepSeek-V4-Flash-0731
+        structured_output_transport: native_tool_call
+        tool_choice: auto
+        parallel_tool_calls: false
+        stream: false
+        temperature: 0.0
+        top_p: null
+        seed: null
+        max_output_tokens: 16384
+        timeout_seconds: 600
+        request_extra_body:
+          chat_template_kwargs:
+            thinking: false
+            preserve_thinking: false
+        expected_tool_calls: 1
+        require_correct_tool_name: true
+        require_schema_valid: true
+        require_evidence_valid: true
+        reasoning_response_fields:
+          - reasoning
+          - reasoning_content
+        reasoning_policy: require_empty
+        accepted_finish_reasons:
+          - tool_calls
+          - stop
+        server_expectations:
+          auto_tool_choice_enabled: true
+          tool_call_parser: deepseek_v4
+          reasoning_parser: deepseek_v4
       kimi_k2_6_vllm_instant:
         profile_id: kimi_k2_6_vllm_instant
         sampling_profile: kimi_instant_default

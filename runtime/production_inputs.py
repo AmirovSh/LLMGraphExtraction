@@ -136,7 +136,7 @@ def request_payload(settings: ProjectSettings, prompt: str, schema: dict[str, An
     if structured_output is not None and structured_output.function_strict:
         function["strict"] = True
     payload = {
-        "model": profile.model_id,
+        "model": profile.served_model_id or profile.model_id,
         "max_tokens": profile.max_output_tokens,
         "messages": [{"role":"system","content":system},{"role":"user","content":prompt}],
         "tools": [{"type": "function", "function": function}],
@@ -168,6 +168,7 @@ def effective_request_identity(
     ).encode("utf-8")
     return {
         "model_id": profile.model_id,
+        "served_model_id": profile.served_model_id or profile.model_id,
         "provider_profile_id": profile.profile_id,
         "sampling_profile_id": profile.sampling_profile,
         "prompt_hash": bundle.content_hash,

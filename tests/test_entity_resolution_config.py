@@ -207,7 +207,7 @@ def test_settings_are_centralized_and_resolved_config_has_no_secret(tmp_path: Pa
     assert saved["entity_resolution"]["embedding"]["input_format"] == "canonical_name_only"
     assert saved["entity_resolution"]["retrieval"]["method_for_large_run"] == "top_k_from_full_matrix"
     remote = saved["runtime"]["remote"]
-    assert remote["llm_provider_profile"] == "kimi_k2_6_vllm_structured"
+    assert remote["llm_provider_profile"] == "deepseek_v4_flash_0731_vllm"
     assert remote["provider_profiles"]["kimi_k2_6_vllm_instant"][
         "request_extra_body"
     ]["chat_template_kwargs"] == {
@@ -267,12 +267,15 @@ def test_unsupported_or_removed_config_fails_before_model_call(
     assert called is False
 
 
-def test_active_kimi_sampling_omits_seed_and_retired_seed_profile() -> None:
+def test_explicit_kimi_sampling_omits_seed_and_retired_seed_profile() -> None:
     remote = load_project_settings(ROOT / "config").runtime.remote
-    assert remote.selected_provider_profile.sampling_profile == (
+    profile = remote.provider_profiles["kimi_k2_6_vllm_structured"].model_copy(
+        update=remote.sampling_profiles["kimi_structured_temperature_zero"].model_dump()
+    )
+    assert profile.sampling_profile == (
         "kimi_structured_temperature_zero"
     )
-    assert remote.selected_provider_profile.temperature == 0
-    assert remote.selected_provider_profile.top_p is None
-    assert remote.selected_provider_profile.seed is None
+    assert profile.temperature == 0
+    assert profile.top_p is None
+    assert profile.seed is None
     assert "kimi_structured_seed_42" not in remote.sampling_profiles

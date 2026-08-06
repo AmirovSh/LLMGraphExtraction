@@ -88,7 +88,16 @@ def test_contract_selection_is_configured_and_model_independent() -> None:
 
 
 def test_generic_provider_profiles_and_request_override_forwarding() -> None:
-    kimi = load_project_settings(ROOT / "config")
+    settings = load_project_settings(ROOT / "config")
+    deepseek_payload = request_payload(settings, "extract", {"type": "object"})
+    assert deepseek_payload["model"] == "deepseek-ai/DeepSeek-V4-Flash-0731"
+    assert deepseek_payload["tool_choice"] == "auto"
+    assert deepseek_payload["parallel_tool_calls"] is False
+    assert deepseek_payload["temperature"] == 0 and "top_p" not in deepseek_payload
+
+    values = settings.model_dump()
+    values["runtime"]["remote"]["llm_provider_profile"] = "kimi_k2_6_vllm_structured"
+    kimi = ProjectSettings.model_validate(values)
     kimi_payload = request_payload(kimi, "extract", {"type": "object"})
     assert kimi_payload["model"] == "kimi-2.6"
     assert kimi_payload["chat_template_kwargs"] == {
@@ -100,7 +109,7 @@ def test_generic_provider_profiles_and_request_override_forwarding() -> None:
     assert kimi_payload["temperature"] == 0 and "top_p" not in kimi_payload
     assert "seed" not in kimi_payload
 
-    values = kimi.model_dump()
+    values = settings.model_dump()
     values["runtime"]["remote"]["llm_provider_profile"] = (
         "kimi_k2_6_vllm_instant"
     )
@@ -112,7 +121,7 @@ def test_generic_provider_profiles_and_request_override_forwarding() -> None:
         and general_payload["top_p"] == .95
     )
 
-    values = kimi.model_dump()
+    values = settings.model_dump()
     values["runtime"]["remote"]["llm_provider_profile"] = (
         "kimi_k2_6_vllm_structured"
     )
@@ -124,7 +133,7 @@ def test_generic_provider_profiles_and_request_override_forwarding() -> None:
     assert "seed" not in structured_payload
     assert structured_payload["tool_choice"] == "auto"
 
-    values = kimi.model_dump()
+    values = settings.model_dump()
     values["runtime"]["remote"]["llm_provider_profile"] = (
         "kimi_k2_6_vllm_thinking_structured"
     )
@@ -143,19 +152,19 @@ def test_generic_provider_profiles_and_request_override_forwarding() -> None:
     assert thinking_profile.reasoning_policy == "allow_nonempty"
     assert thinking_profile.reasoning_persistence == "discard"
 
-    values = kimi.model_dump()
+    values = settings.model_dump()
     values["runtime"]["remote"]["provider_profiles"][
         "kimi_k2_6_vllm_structured"
     ]["request_extra_body"] = {"vendor": {"nested": {"enabled": True}}}
     with pytest.raises(ValidationError, match="unsupported extension key"):
         ProjectSettings.model_validate(values)
 
-    values = kimi.model_dump()
+    values = settings.model_dump()
     values["runtime"]["remote"]["llm_request_overrides"] = {"top_p": 0.75}
     with pytest.raises(ValidationError, match="unsupported extension key"):
         ProjectSettings.model_validate(values)
 
-    values = kimi.model_dump()
+    values = settings.model_dump()
     values["runtime"]["remote"]["llm_provider_profile"] = "unsupported"
     with pytest.raises(ValidationError, match="llm_provider_profile"):
         ProjectSettings.model_validate(values)

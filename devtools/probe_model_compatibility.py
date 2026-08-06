@@ -278,7 +278,7 @@ def _semantic_assertions(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--profile", required=True)
+    parser.add_argument("--profile", "--provider-profile", dest="profile", required=True)
     parser.add_argument("--sampling-profile")
     parser.add_argument("--config-dir", type=Path, default=ROOT / "config")
     parser.add_argument("--input", type=Path, default=ROOT / "examples" / "sample_input.txt")
@@ -327,7 +327,8 @@ def main(argv: list[str] | None = None) -> int:
 
     output: dict[str, Any] = {
         "profile_id": profile.profile_id,
-        "model_id": profile.model_id,
+        "requested_model_id": profile.model_id,
+        "resolved_served_model_id": profile.served_model_id or profile.model_id,
         "sampling_profile": args.sampling_profile or profile.sampling_profile,
         "sampling": {
             "temperature": profile.temperature,
@@ -358,6 +359,36 @@ def main(argv: list[str] | None = None) -> int:
         "tool_matrix": {},
         "production_schema_repetitions": [],
     }
+    try:
+        discovery_response = httpx.get(
+            f"{base_url}/models", headers=headers,
+            timeout=min(probe.timeout_seconds, 10), trust_env=remote.trust_env,
+        )
+        if discovery_response.status_code == 404:
+            output["model_discovery"] = {"available": False}
+        else:
+            discovery_response.raise_for_status()
+            discovery = discovery_response.json()
+            models = discovery.get("data") if isinstance(discovery, dict) else None
+            if not isinstance(models, list):
+                raise ValueError("model registry response has no data list")
+            expected_served = profile.served_model_id or profile.model_id
+            match = next((row for row in models if isinstance(row, dict)
+                          and row.get("id") == expected_served), None)
+            output["model_discovery"] = {
+                "available": True, "requested_model_id": profile.model_id,
+                "configured_served_model_id": expected_served,
+                "resolved_served_model_id": match.get("id") if match else None,
+                "model_revision": match.get("revision") if match else None,
+            }
+            if match is None:
+                output["status"] = "blocked"
+                output["classification"] = "REQUESTED_MODEL_NOT_SERVED"
+                return _finish(output, args.json_output, 1)
+    except (httpx.HTTPError, ValueError, json.JSONDecodeError) as error:
+        output["model_discovery"] = {
+            "available": False, "error": f"{type(error).__name__}: {error}",
+        }
 
     if not args.production_only and not args.capability_tool_only:
         capability_tokens = (

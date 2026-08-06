@@ -53,7 +53,6 @@ def test_production_and_devtool_source_boundaries() -> None:
         root / "runtime" / "project_conformance.py",
         root / "scripts" / "check_public_golden.py",
         root / "scripts" / "check_project_conformance.py",
-        root / "scripts" / "probe_model_compatibility.py",
         root / "scripts" / "probe_kimi26_compatibility.py",
         root / "scripts" / "render_example_graph.py",
     ):
