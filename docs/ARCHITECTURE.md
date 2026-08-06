@@ -2,16 +2,16 @@
 
 The supported pipeline is:
 
-`text -> deterministic evidence spans -> one Kimi extraction per span -> structural validation -> bge-m3 -> observable entity resolution -> deterministic FinalGraph JSON -> Neo4j projection`
+`text -> deterministic evidence spans -> one extraction per span -> structural validation -> bge-m3 -> observable entity resolution -> deterministic FinalGraph JSON -> Neo4j projection`
 
 JSON is authoritative. Neo4j is an exact, graph-ID-scoped projection and is
 never a recovery or semantic-editing store.
 
 ## Selected production contract
 
-- model: Kimi K2.6 (`kimi-2.6`);
-- provider profile: `kimi_k2_6_vllm_structured`;
-- sampling profile: `kimi_structured_temperature_zero`;
+- model: DeepSeek V4 Flash 0731 (`deepseek-ai/DeepSeek-V4-Flash-0731`);
+- provider profile: `deepseek_v4_flash_0731_vllm`;
+- sampling profile: `deepseek_v4_flash_temperature_zero`;
 - extraction contract: `evidence_span_fact_extraction`;
 - prompt: `prompt_kimi_default`;
 - schema: `fact_extraction_schema`;
@@ -88,3 +88,7 @@ model probes, public-golden evaluation, and project-conformance orchestration
 live under `devtools/`. They remain tracked for review and CI but are excluded
 from built wheels. Generated probe, conformance, golden, output, database, log,
 and cache artifacts are ignored rather than packaged.
+
+Manifest-driven multi-document orchestration is documented in
+[`BATCH_PROCESSING.md`](BATCH_PROCESSING.md). It adds a fair global extraction
+queue and graph-group barriers while preserving the single-document entry point.
