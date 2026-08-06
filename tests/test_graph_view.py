@@ -15,6 +15,7 @@ from runtime.graph_view import (
     browser_url,
     graph_query,
     graph_view_payload,
+    load_successful_run,
     open_browser,
     preflight_graph,
     select_run,
@@ -127,6 +128,29 @@ def test_explicit_run_and_graph_id_selection(tmp_path: Path) -> None:
         select_run(outputs, graph_id='fact_extraction_x" MATCH (n)')
     with pytest.raises(ValueError, match="run_id"):
         select_run(outputs, run_id="../escape")
+
+
+def test_completed_run_identity_does_not_depend_on_output_basename(tmp_path: Path) -> None:
+    run_dir = write_run(tmp_path, "generated_run_id", completed_at=None)
+    smoke_output = tmp_path / "smoke_run_001"
+    run_dir.rename(smoke_output)
+
+    selected = load_successful_run(smoke_output)
+
+    assert selected.run_id == "generated_run_id"
+    assert selected.graph_id == "fact_extraction_generated_run_id"
+    assert selected.run_dir == smoke_output
+
+
+def test_completed_run_rejects_mismatched_authoritative_metadata(tmp_path: Path) -> None:
+    run_dir = write_run(tmp_path, "generated_run_id", completed_at=None)
+    report_path = run_dir / "run_report.json"
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    report["run_id"] = "corrupted_run_id"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="run identity mismatch"):
+        load_successful_run(run_dir)
 
 
 def test_query_filters_every_endpoint_and_relationship_and_validates_limit() -> None:

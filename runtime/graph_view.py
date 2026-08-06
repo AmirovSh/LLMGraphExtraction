@@ -126,7 +126,7 @@ def load_successful_run(run_dir: Path) -> GraphRun:
         run_dir / "projection_manifest.json", graph_id=graph_id
     )
     run_id = validate_run_id(str(graph.get("run_id", "")))
-    if run_id != run_dir.name or report.get("run_id") != run_id or report.get("graph_id") != graph_id:
+    if report.get("run_id") != run_id or report.get("graph_id") != graph_id:
         raise ValueError(f"run identity mismatch: {run_dir.name}")
     if not validation.get("passed") or not validation.get("json_neo4j_parity"):
         raise ValueError(f"run validation failed: {run_id}")
