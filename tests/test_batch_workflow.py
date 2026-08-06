@@ -6,6 +6,7 @@ from pathlib import Path
 import yaml
 
 from runtime.batch_runner import run_batch
+from runtime.production_runner import run as run_single
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -48,17 +49,24 @@ def fake_resolution(entities, _relations, **_kwargs):
     for entity in entities:
         by_name.setdefault(entity["name"], f"E{len(by_name) + 1:03d}")
         resolution[entity["local_id"]] = by_name[entity["name"]]
-    return resolution, {"embedder_calls": 1, "pair_decisions": []}
+    return resolution, {"embedder_calls": 1, "pair_decisions": [],
+        "merged_pairs": [], "keep_separate_pairs": [],
+        "unresolved_merge_candidates": [], "candidate_threshold": .76,
+        "merge_threshold": .90, "vector_dimension": 2,
+        "unique_pair_count": max(0, len(entities) * (len(entities) - 1) // 2)}
 
 
 def fake_neo4j(_graph_id, _nodes, _edges, _settings, _ownership):
-    return {"status": "projected"}, {"passed": True}
+    return {"status": "projected"}, {"status": "passed", "passed": True}
 
 
 def test_hybrid_batch_completes_with_group_isolation(tmp_path, monkeypatch):
     monkeypatch.setenv("SEMANTIC_GRAPH_LLM_BASE_URL", "http://offline")
     monkeypatch.setenv("SEMANTIC_GRAPH_EMBEDDING_BASE_URL", "http://offline")
     monkeypatch.setenv("OPENAI_API_KEY", "offline")
+    monkeypatch.setenv("NEO4J_URI", "neo4j://offline")
+    monkeypatch.setenv("NEO4J_USERNAME", "offline")
+    monkeypatch.setenv("NEO4J_PASSWORD", "offline")
     documents = []
     for index in range(1, 7):
         path = tmp_path / f"d{index}.txt"
@@ -108,3 +116,51 @@ def test_hybrid_batch_completes_with_group_isolation(tmp_path, monkeypatch):
         assert all(span.split(":", 1)[0] in document_ids
                    for node in graph["nodes"] for span in node["evidence_span_ids"])
     assert len(namespaces) == 3
+
+
+def test_one_document_batch_is_semantically_equivalent_to_legacy_run(tmp_path, monkeypatch):
+    monkeypatch.setenv("SEMANTIC_GRAPH_LLM_BASE_URL", "http://offline")
+    monkeypatch.setenv("SEMANTIC_GRAPH_EMBEDDING_BASE_URL", "http://offline")
+    monkeypatch.setenv("OPENAI_API_KEY", "offline")
+    monkeypatch.setenv("NEO4J_URI", "neo4j://offline")
+    monkeypatch.setenv("NEO4J_USERNAME", "offline")
+    monkeypatch.setenv("NEO4J_PASSWORD", "offline")
+    source = tmp_path / "source.txt"
+    source.write_text("Acme operates Office.", encoding="utf-8")
+    single_output = tmp_path / "single"
+    assert run_single(source, single_output, ROOT / "config", run_id="compat",
+                      llm_post=lambda *_args, **_kwargs: Response(),
+                      embedding_resolver=fake_resolution,
+                      neo4j_importer=fake_neo4j) == 0
+    batch_output = tmp_path / "batch_output"
+    manifest = {
+        "manifest_version": 1,
+        "batch": {"id": "compat", "output_directory": str(batch_output)},
+        "execution": {"global_max_in_flight": 1, "per_document_max_in_flight": 1,
+                      "per_graph_max_in_flight": 1,
+                      "scheduling_policy": "fair_round_robin",
+                      "continue_other_graphs_on_failure": True},
+        "model": {"provider_profile": "deepseek_v4_flash_0731_vllm",
+                  "model_id": "deepseek-ai/DeepSeek-V4-Flash-0731"},
+        "documents": [{"id": "document", "path": source.name}],
+        "graphs": [{"id": "graph", "documents": ["document"]}],
+    }
+    path = tmp_path / "compat.yaml"
+    path.write_text(yaml.safe_dump(manifest), encoding="utf-8")
+    assert run_batch(path, ROOT / "config",
+                     llm_post=lambda *_args, **_kwargs: Response(),
+                     embedding_resolver=fake_resolution,
+                     neo4j_importer=fake_neo4j) == 0
+    legacy = json.loads((single_output / "fact_graph.json").read_text(encoding="utf-8"))
+    grouped = json.loads((batch_output / "graphs" / "graph" / "fact_graph.json").read_text(encoding="utf-8"))
+    node_semantics = lambda graph: sorted(
+        (node["canonical_name"], node["primary_type"], tuple(node["aliases"]))
+        for node in graph["nodes"]
+    )
+    edge_semantics = lambda graph: sorted(
+        (edge["raw_relation"], edge["relation_family"], edge["relation_description"],
+         edge["support_level"], json.dumps(edge["qualifiers"], sort_keys=True))
+        for edge in graph["edges"]
+    )
+    assert node_semantics(legacy) == node_semantics(grouped)
+    assert edge_semantics(legacy) == edge_semantics(grouped)
