@@ -37,7 +37,7 @@ def _profile_payload(
     profile: Any, *, messages: list[dict[str, str]], max_tokens: int,
 ) -> dict[str, Any]:
     payload: dict[str, Any] = {
-        "model": profile.model_id,
+        "model": profile.served_model_id or profile.model_id,
         "messages": messages,
         "max_tokens": max_tokens,
         "stream": profile.stream,
@@ -115,11 +115,18 @@ def _minimal_tool_result(
         and (calls[0].get("function") or {}).get("name") == "return_value"
     )
     arguments_object = False
+    arguments_types_valid = False
     if correct:
         try:
-            arguments_object = isinstance(
-                json.loads(calls[0]["function"]["arguments"]), dict
-            )
+            arguments = json.loads(calls[0]["function"]["arguments"])
+            arguments_object = isinstance(arguments, dict)
+            arguments_types_valid = arguments == {
+                "value": "OK",
+                "count": 2,
+                "enabled": True,
+                "labels": ["alpha", "beta"],
+                "metadata": {"source": "probe"},
+            }
         except (KeyError, TypeError, json.JSONDecodeError):
             pass
     finish = choice.get("finish_reason")
@@ -138,6 +145,7 @@ def _minimal_tool_result(
         transport.get("http_status") == 200
         and correct
         and arguments_object
+        and arguments_types_valid
         and reasoning_valid
         and not raw_special_tokens_present
         and finish in profile.accepted_finish_reasons
@@ -166,6 +174,7 @@ def _minimal_tool_result(
         "tool_calls": len(calls),
         "correct_function": correct,
         "arguments_json_object": arguments_object,
+        "arguments_types_valid": arguments_types_valid,
         "reasoning_absent": reasoning_absent,
         "reasoning_present": reasoning_present,
         "reasoning_separated": reasoning_separated,
@@ -418,8 +427,21 @@ def main(argv: list[str] | None = None) -> int:
             "description": "Return the requested value.",
             "parameters": {
                 "type": "object",
-                "properties": {"value": {"type": "string"}},
-                "required": ["value"],
+                "properties": {
+                    "value": {"type": "string"},
+                    "count": {"type": "integer"},
+                    "enabled": {"type": "boolean"},
+                    "labels": {
+                        "type": "array", "items": {"type": "string"},
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "properties": {"source": {"type": "string"}},
+                        "required": ["source"],
+                        "additionalProperties": False,
+                    },
+                },
+                "required": ["value", "count", "enabled", "labels", "metadata"],
                 "additionalProperties": False,
             },
         },
@@ -437,7 +459,10 @@ def main(argv: list[str] | None = None) -> int:
             profile,
             messages=[
                 {"role": "system", "content": "Call return_value exactly once. Return no prose."},
-                {"role": "user", "content": "Return the value OK."},
+                {"role": "user", "content": (
+                    "Return value OK, count 2, enabled true, labels alpha and beta, "
+                    "and metadata source probe."
+                )},
             ],
             max_tokens=(
                 probe.thinking_max_output_tokens

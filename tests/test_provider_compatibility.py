@@ -15,7 +15,9 @@ from runtime.provider_compatibility import (
     discard_reasoning_text,
     evaluate_structured_response,
 )
-from devtools.probe_model_compatibility import _semantic_assertions
+from devtools.probe_model_compatibility import (
+    _minimal_tool_result, _profile_payload, _semantic_assertions,
+)
 from devtools.probe_model_compatibility import main as probe_main
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -253,6 +255,35 @@ def test_runtime_request_builder_has_no_model_name_routing() -> None:
     assert "kimi" not in source
     assert "deepseek" not in source
     assert "model_name.lower" not in source
+
+
+def test_probe_payload_uses_explicit_served_model_alias() -> None:
+    profile = load_project_settings(ROOT / "config").runtime.remote.selected_provider_profile
+    payload = _profile_payload(profile, messages=[{"role": "user", "content": "OK"}],
+                               max_tokens=10)
+    assert payload["model"] == "deepseek-v4-flash"
+    assert profile.model_id == "deepseek-ai/DeepSeek-V4-Flash-0731"
+
+
+def test_tool_probe_validates_nested_argument_types() -> None:
+    arguments = {
+        "value": "OK", "count": 2, "enabled": True,
+        "labels": ["alpha", "beta"], "metadata": {"source": "probe"},
+    }
+    body = {"choices": [{"finish_reason": "tool_calls", "message": {
+        "tool_calls": [{"function": {
+            "name": "return_value", "arguments": json.dumps(arguments),
+        }}],
+    }}]}
+    profile = load_project_settings(ROOT / "config").runtime.remote.selected_provider_profile
+    passed = _minimal_tool_result({"http_status": 200}, body, profile)
+    assert passed["result"] == "PASS"
+    assert passed["arguments_types_valid"] is True
+    arguments["count"] = "2"
+    body["choices"][0]["message"]["tool_calls"][0]["function"]["arguments"] = json.dumps(arguments)
+    failed = _minimal_tool_result({"http_status": 200}, body, profile)
+    assert failed["result"] == "FAIL"
+    assert failed["arguments_types_valid"] is False
 
 
 def test_profile_environment_json_overlay_uses_typed_validation(
