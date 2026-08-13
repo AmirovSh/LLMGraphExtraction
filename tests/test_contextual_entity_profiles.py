@@ -41,7 +41,35 @@ def test_matched_input_is_identical_for_bge_and_reranker():
     assert profile == profile
 
 
+def test_benchmark_profiles_are_nontrivial_pair_independent_and_grounded():
+    from devtools.run_contextual_reranker import benchmark
+    rows = benchmark()
+    assert len(rows) == 120
+    assert sum(r["expected"] == "MERGE" for r in rows) == 40
+    assert all(r["entity_a"].canonical_name != r["entity_b"].canonical_name for r in rows)
+    assert all(r["entity_a"].evidence and r["entity_b"].evidence for r in rows)
+    assert all(r["entity_a"].incidents and r["entity_b"].incidents for r in rows)
+    first = rows[0]["entity_a"]
+    assert render_profile(first, "R4") == render_profile(first, "R4")
+
+
+def test_same_context_negatives_remain_distinct_and_direction_is_preserved():
+    from devtools.run_contextual_reranker import benchmark
+    negative = next(r for r in benchmark() if r["expected"] == "SPLIT")
+    assert negative["entity_a"].evidence == negative["entity_b"].evidence
+    left = render_profile(negative["entity_a"], "R4")["text"]
+    right = render_profile(negative["entity_b"], "R4")["text"]
+    assert "->" in left and "<-" in right
+
+
 def test_production_runners_do_not_import_experiment():
     from pathlib import Path
     for path in (Path("scripts/run_production.py"), Path("scripts/run_batch.py")):
         assert "contextual_entity_profiles" not in path.read_text(encoding="utf-8")
+
+
+def test_context_section_removal_is_deterministic():
+    from devtools.run_contextual_reranker_diagnostics import strip_section
+    text = "name\naliases:\n- A\nevidence:\n- E\nobserved_local_relations:\n- R"
+    assert strip_section(text, "evidence:", "observed_local_relations:") == "name\naliases:\n- A\nobserved_local_relations:\n- R"
+    assert strip_section(text, "observed_local_relations:", None).endswith("- E")

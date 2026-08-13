@@ -16,23 +16,46 @@ ROOT = Path(__file__).resolve().parents[1]; OUT = ROOT / "release_audit/context_
 
 
 def benchmark() -> list[dict[str, Any]]:
-    nouns = [("Registry", "Record"), ("Gateway", "Manifest"), ("Policy", "Result"), ("Service", "Component"),
-             ("Person", "Account"), ("Container", "Artifact"), ("Approval Process", "Approval Record"),
-             ("Facility", "Location"), ("Build", "Definition"), ("Release", "Ledger")]
+    stems = ["Alder", "Boreal", "Cedar", "Drift", "Ember", "Fjord", "Grove", "Harbor", "Ion", "Juniper"]
+    positive_forms = [("Records Management Authority", "Records Authority", "ORGANIZATION"),
+        ("Identity Verification Service", "Identity Service", "SERVICE"),
+        ("Secure Document Repository", "Document Repository", "REPOSITORY"),
+        ("Regulatory Submission Gateway", "Submission Gateway", "SYSTEM")]
+    negative_forms = [("Build Registry", "Build Registry Record", "COMPONENT", "RECORD", "process_record"),
+        ("Access Policy", "Access Policy Result", "POLICY", "RESULT", "policy_result"),
+        ("Identity Service", "Identity Service Adapter", "SERVICE", "COMPONENT", "service_component"),
+        ("Evidence Container", "Evidence Artifact", "CONTAINER", "ARTIFACT", "container_contained"),
+        ("Review Process", "Review Record", "PROCESS", "RECORD", "process_record"),
+        ("Research Facility", "Research District", "FACILITY", "LOCATION", "facility_location"),
+        ("Operator", "Operator Account", "PERSON", "ACCOUNT", "person_account"),
+        ("Protocol Version 3", "Protocol Version 4", "VERSION", "VERSION", "version")]
     rows=[]
+    def ent(i: int, side: str, name: str, kind: str, alias: str, evidence: str, direction: str,
+            relation: str, neighbour: str) -> LocalEntityContext:
+        return LocalEntityContext(local_id=f"C{i}{side}", canonical_name=name, entity_type=kind,
+            aliases=[alias] if alias else [], evidence=[evidence],
+            incidents=[LocalIncident(direction=direction, relation=relation, neighbour_name=neighbour, source_order=0)],
+            source_kind="CONTROLLED_SYNTHETIC", identity_cluster_id=f"cluster-{i}")
     for i in range(120):
-        left, right = nouns[i % len(nouns)]; merge = i % 3 == 0
-        base = f"Delta {left} {i//10}"; other = base if merge else f"Delta {left} {right} {i//10}"
-        doc = (f"The {base} validates approved inputs and records the decision. "
-               f"The {other} is referenced by the local workflow and preserves its own lifecycle.")
-        def ent(local_id: str, name: str, relation: str, neighbour: str) -> LocalEntityContext:
-            return LocalEntityContext(local_id=local_id, canonical_name=name, entity_type="COMPONENT" if "Record" not in name and "Account" not in name else "RECORD",
-                aliases=([name.replace("Delta ", "")] if merge else []), evidence=[doc],
-                incidents=[LocalIncident(direction="outgoing", relation=relation, neighbour_name=neighbour, source_order=0)],
-                source_kind="CONTROLLED_SYNTHETIC", identity_cluster_id=f"cluster-{i}")
-        a=ent(f"C{i}A",base,"validates",other); b=ent(f"C{i}B",other,"preserves",base)
-        rows.append({"case_id":f"CTX{i:03d}","identity_cluster_id":f"cluster-{i}","category":"true_alias" if merge else "RELATED_BUT_DISTINCT",
-                     "expected":"MERGE" if merge else "SPLIT","source_kind":"CONTROLLED_SYNTHETIC","document":doc,"entity_a":a,"entity_b":b})
+        stem=stems[(i//4)%len(stems)]
+        if i % 3 == 0:
+            full, short, kind = positive_forms[(i//3) % len(positive_forms)]
+            left=f"{stem} {full}"; right=f"{stem} {short}"
+            evidence_a=f"The {left} receives approved submissions under the {stem} charter."
+            evidence_b=f"Staff refer to the {right} when routing approved submissions under that charter."
+            a=ent(i,"A",left,kind,right,evidence_a,"outgoing","receives","Approved Submission")
+            b=ent(i,"B",right,kind,left,evidence_b,"incoming","routes","Approved Submission")
+            expected="MERGE"; category="true_alias"
+            document=evidence_a+" "+evidence_b
+        else:
+            left_form,right_form,left_type,right_type,category=negative_forms[(i-(i//3)-1)%len(negative_forms)]
+            left=f"{stem} {left_form}"; right=f"{stem} {right_form}"
+            document=f"The {left} validates the request and writes the {right}. The {right} preserves the resulting lifecycle state."
+            a=ent(i,"A",left,left_type,"",document,"outgoing","writes",right)
+            b=ent(i,"B",right,right_type,"",document,"incoming","written_by",left)
+            expected="SPLIT"
+        rows.append({"case_id":f"CTX{i:03d}","identity_cluster_id":f"cluster-{i}","category":category,
+                     "expected":expected,"source_kind":"CONTROLLED_SYNTHETIC","document":document,"entity_a":a,"entity_b":b})
     return rows
 
 
