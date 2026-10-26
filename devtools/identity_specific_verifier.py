@@ -36,7 +36,7 @@ def _clean(value: str) -> str:
     return " ".join(value.split())
 
 
-def render_profile(profile: EntityProfile, representation: Representation) -> dict[str, Any]:
+def render_profile(profile: EntityProfile, representation: Representation, *, relation_limit: int | None = None) -> dict[str, Any]:
     lines = [_clean(profile.canonical_name)]
     if representation != "V1":
         lines = [f"canonical_name: {_clean(profile.canonical_name)}",
@@ -49,15 +49,16 @@ def render_profile(profile: EntityProfile, representation: Representation) -> di
         if lines[-1] == "evidence:": lines.append("- none")
     if representation in {"V4", "V4_LITE"}:
         lines.append("observed_local_relations:")
-        limit = 8 if representation == "V4" else 3
+        limit = relation_limit if relation_limit is not None else (8 if representation == "V4" else 3)
         lines.extend(f"- {_clean(x)[:160]}" for x in profile.relations[:limit])
         if lines[-1] == "observed_local_relations:": lines.append("- none")
     text = "\n".join(lines)[:800]
     assert_pre_resolution({"local_id": profile.local_id, "representation": representation, "text": text})
     return {"local_id": profile.local_id, "representation": representation, "text": text,
-            "sha256": hashlib.sha256(text.encode()).hexdigest(), "characters": len(text)}
-
-
+            "sha256": hashlib.sha256(text.encode()).hexdigest(), "characters": len(text),
+            "raw_relation_count": len(profile.relations), "retained_relation_count": min(len(profile.relations), limit) if representation in {"V4", "V4_LITE"} else 0,
+            "raw_characters": len("\n".join(lines)), "truncated": len("\n".join(lines)) > 800,
+            "approx_tokens": max(1, (len(text)+3)//4)}
 def assert_pre_resolution(payload: Any) -> None:
     def walk(value: Any) -> None:
         if isinstance(value, dict):

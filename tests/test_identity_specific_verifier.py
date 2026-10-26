@@ -31,3 +31,11 @@ def test_baseline_and_metrics_are_conservative():
     assert deterministic_baseline(profile(),profile("Different Service")) == "UNCERTAIN"
     result=metrics([{"label":"SAME_ENTITY","decision":"SAME_ENTITY"},{"label":"DIFFERENT_ENTITY","decision":"UNCERTAIN"}])
     assert result["same_precision"] == 1.0 and result["coverage"] == .5
+
+
+def test_relation_limit_and_serialization_are_deterministic():
+    p=EntityProfile("x","X","SERVICE",relations=("r1","r2","r3","r4"))
+    first=render_profile(p,"V4_LITE",relation_limit=2)
+    assert first == render_profile(p,"V4_LITE",relation_limit=2)
+    assert first["raw_relation_count"] == 4
+    assert first["retained_relation_count"] == 2
