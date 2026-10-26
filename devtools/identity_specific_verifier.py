@@ -59,6 +59,14 @@ def render_profile(profile: EntityProfile, representation: Representation, *, re
             "raw_relation_count": len(profile.relations), "retained_relation_count": min(len(profile.relations), limit) if representation in {"V4", "V4_LITE"} else 0,
             "raw_characters": len("\n".join(lines)), "truncated": len("\n".join(lines)) > 800,
             "approx_tokens": max(1, (len(text)+3)//4)}
+
+
+def canonical_pair(left: dict[str, Any], right: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Return an orientation invariant ordering using only serialized profile hashes/IDs."""
+    key=lambda value:(value["sha256"], value["local_id"])
+    return (left,right) if key(left) <= key(right) else (right,left)
+
+
 def assert_pre_resolution(payload: Any) -> None:
     def walk(value: Any) -> None:
         if isinstance(value, dict):

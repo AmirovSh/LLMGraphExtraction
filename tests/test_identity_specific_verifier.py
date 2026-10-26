@@ -1,5 +1,5 @@
 from devtools.identity_specific_verifier import (EntityProfile,VerifierDecision,
-    assert_pre_resolution,deterministic_baseline,metrics,render_profile,verifier_tool)
+    assert_pre_resolution,canonical_pair,deterministic_baseline,metrics,render_profile,verifier_tool)
 
 
 def profile(name="Example Service"):
@@ -39,3 +39,9 @@ def test_relation_limit_and_serialization_are_deterministic():
     assert first == render_profile(p,"V4_LITE",relation_limit=2)
     assert first["raw_relation_count"] == 4
     assert first["retained_relation_count"] == 2
+
+
+def test_canonical_pair_is_orientation_invariant():
+    a=render_profile(profile("Alpha"),"V4_LITE",relation_limit=4)
+    b=render_profile(profile("Beta"),"V4_LITE",relation_limit=4)
+    assert canonical_pair(a,b) == canonical_pair(b,a)
